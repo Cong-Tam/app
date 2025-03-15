@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ListContactController;
+use App\Http\Controllers\Api\TagController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +27,24 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(
     ['middleware' => 'auth:sanctum']
     , function () {
+
+        // Tags
+        Route::group(['prefix' => 'tags'], function() {
+            Route::get('/', [TagController::class, 'index']);
+            Route::post('/', [TagController::class, 'store']);
+            Route::get('/{id}', [TagController::class, 'detail']);
+            Route::put('/{id}', [TagController::class, 'update']);
+            Route::delete('/{id}', [TagController::class, 'delete']);
+        });
+
+        // ListContact
+        Route::group(['prefix' => 'list-contacts'], function() {
+            Route::get('/', [ListContactController::class, 'index']);
+            Route::post('/', [ListContactController::class, 'store']);
+            Route::get('/{id}', [ListContactController::class, 'detail']);
+            Route::put('/{id}', [ListContactController::class, 'update']);
+            Route::delete('/{id}', [ListContactController::class, 'delete']);
+        });
 
         // Logout
         Route::get('logout', [AuthController::class, 'logout']);
