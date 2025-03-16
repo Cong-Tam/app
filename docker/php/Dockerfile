@@ -17,10 +17,11 @@ RUN apt-get update && \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    libzip-dev \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && apt-get -y install mariadb-client \
-    && docker-php-ext-install pdo_mysql \
+    && docker-php-ext-install pdo_mysql zip \
     && docker-php-ext-configure gd --with-freetype \
     && docker-php-ext-install -j$(nproc) gd 
 
