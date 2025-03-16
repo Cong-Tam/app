@@ -20,4 +20,5 @@ Chạy lệnh:
 + docker compose exec app bash -c "composer install"
 + docker compose exec app bash -c "php artisan key:generate"
 + docker compose exec app bash -c "php artisan migrate"
++ docker compose exec app bash -c "php artisan db:seed"
 + docker compose exec app bash -c "php artisan storage:link"
