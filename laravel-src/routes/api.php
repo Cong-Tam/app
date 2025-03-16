@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\ListContactController;
 use App\Http\Controllers\Api\ManagerController;
 use App\Http\Controllers\Api\TagController;
+use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -63,6 +65,11 @@ Route::group(
             Route::get('/{id}', [ContactController::class, 'detail']);
             Route::post('/updates', [ContactController::class, 'update']);
             Route::post('/deletes', [ContactController::class, 'delete']);
+        });
+
+        // Export
+        Route::group(['prefix' => 'export/excel'], function() {
+            Route::post('/contacts', [ExportController::class, 'exportContacts']);
         });
 
         // Logout
