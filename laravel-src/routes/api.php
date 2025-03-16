@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\ListContactController;
 use App\Http\Controllers\Api\ManagerController;
 use App\Http\Controllers\Api\TagController;
@@ -53,6 +54,15 @@ Route::group(
             Route::get('/{id}', [ManagerController::class, 'detail']);
             Route::post('/{id}', [ManagerController::class, 'update']);
             Route::delete('/{id}', [ManagerController::class, 'delete']);
+        });
+
+        // Contacts
+        Route::group(['prefix' => 'contacts'], function() {
+            Route::get('/', [ContactController::class, 'index']);
+            Route::post('/', [ContactController::class, 'store']);
+            Route::get('/{id}', [ContactController::class, 'detail']);
+            Route::post('/updates', [ContactController::class, 'update']);
+            Route::post('/deletes', [ContactController::class, 'delete']);
         });
 
         // Logout
