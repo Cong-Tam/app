@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ListContactController;
+use App\Http\Controllers\Api\ManagerController;
 use App\Http\Controllers\Api\TagController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,14 @@ Route::group(
             Route::get('/{id}', [ListContactController::class, 'detail']);
             Route::put('/{id}', [ListContactController::class, 'update']);
             Route::delete('/{id}', [ListContactController::class, 'delete']);
+        });
+
+        // Managers
+        Route::group(['prefix' => 'managers'], function() {
+            Route::post('/', [ManagerController::class, 'store']);
+            Route::get('/{id}', [ManagerController::class, 'detail']);
+            Route::post('/{id}', [ManagerController::class, 'update']);
+            Route::delete('/{id}', [ManagerController::class, 'delete']);
         });
 
         // Logout
