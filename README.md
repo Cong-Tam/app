@@ -29,6 +29,7 @@ Nếu sử dụng ubuntu, cần cấp quyền thư mục
 
 Chạy command kiểm tra các service đã có status UP:
 + docker compose ps -a
+
 Nếu chưa:
 + docker compose start
 
