@@ -37,14 +37,17 @@ class ContactController extends Controller
     public function update(UpdateContactsRequest $request) {
         $result = resolve(UpdateContacts::class)->execute($request->validated());
 
-        return response()->json($result);
+        return response()->json([
+            'status' => 'success',
+            'count'  => $result,
+        ]);
     }
 
     public function delete(DeleteContactsRequest $request){
         resolve(DeleteContacts::class)->execute($request->validated());
 
         return response()->json([
-            'message' => 'Delete tag success'
+            'message' => 'Delete contact success'
         ]);
     }
 }

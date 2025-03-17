@@ -16,6 +16,8 @@ class UpdateContacts
         $phoneCases = [];
         $opportunitieCases = [];
         $userIdCases = [];
+        $tagPivot = [];
+        $listContactPivot = [];
 
         $ids = [];
         $params = [];
@@ -23,15 +25,30 @@ class UpdateContacts
         foreach ($request['contacts'] as $contact) {
             $id = (int) $contact['id'];
             $ids[] = $id;
-
-            if (isset($contact['first_name'])) {
-                $firstNameCases[] = "WHEN {$id} THEN ?";
-                $params[0][] = $contact['first_name'];
+            if (!empty($contact['tagIds'])) {
+                foreach($contact['tagIds'] as $tagId) {
+                    $tagPivot[] = [
+                        'contact_id' => $id, 'tag_id' => $tagId
+                    ];
+                }
             }
 
-            if (isset($contact['last_name'])) {
+            if (!empty($contact['listContactIds'])) {
+                foreach($contact['listContactIds'] as $listContactId) {
+                    $listContactPivot[] = [
+                        'contact_id' => $id, 'list_id' => $listContactId
+                    ];
+                }
+            }
+
+            if (isset($contact['firstName'])) {
+                $firstNameCases[] = "WHEN {$id} THEN ?";
+                $params[0][] = $contact['firstName'];
+            }
+
+            if (isset($contact['lastName'])) {
                 $lastNameCases[] = "WHEN {$id} THEN ?";
-                $params[1][] = $contact['last_name'];
+                $params[1][] = $contact['lastName'];
             }
 
             if (isset($contact['email'])) {
@@ -49,13 +66,11 @@ class UpdateContacts
                 $params[4][] = $contact['opportunity'];
             }
 
-            if (isset($contact['user_id'])) {
+            if (isset($contact['userId'])) {
                 $userIdCases[] = "WHEN {$id} THEN ?";
-                $params[5][] = (int) $contact['user_id'];
+                $params[5][] = (int) $contact['userId'];
             }
         }
-
-        // dd($firstNameCases, $lastNameCases, $emailCases, $phoneCases, $opportunitieCases, $userIdCases, $params);
 
         $query = "UPDATE contacts SET ";
         if (!empty($firstNameCases)) {
@@ -84,26 +99,16 @@ class UpdateContacts
 
         $query .= "`updated_by` = ?, `updated_at` = ? WHERE `id` IN ({$idsList})";
 
+        $this->syncPivotData($ids, $tagPivot, $listContactPivot);
+
         return DB::update($query, $params);
     }
 
-    public function updateValues(array $values, $table)
+    private function syncPivotData(array $contactIds, $tagPivot, $listContactPivot)
     {
-        $cases = [];
-        $ids = [];
-        $params = [];
-
-        foreach ($values as $id => $value) {
-            $id = (int) $id;
-            $cases[] = "WHEN {$id} then ?";
-            $params[] = $value;
-            $ids[] = $id;
-        }
-
-        $ids = implode(',', $ids);
-        $cases = implode(' ', $cases);
-        $params[] = Carbon::now();
-
-        return DB::update("UPDATE `{$table}` SET `value` = CASE `id` {$cases} END, `updated_at` = ? WHERE `id` in ({$ids})", $params);
+        DB::table('contact_tag')->whereIn('contact_id', $contactIds)->delete();
+        DB::table('contact_list')->whereIn('contact_id', $contactIds)->delete();
+        DB::table('contact_tag')->insert($tagPivot);
+        DB::table('contact_list')->insert($listContactPivot);
     }
 }

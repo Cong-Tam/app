@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Contact;
 
+use App\Rules\DupplicateItem;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -23,12 +24,12 @@ class CreateContactRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => [
+            'firstName' => [
                 'required',
                 'string',
                 'max:255',
             ],
-            'last_name' => [
+            'lastName' => [
                 'required',
                 'string',
                 'max:255',
@@ -48,10 +49,30 @@ class CreateContactRequest extends FormRequest
                 'string',
                 'max:255',
             ],
-            'user_id' => [
+            'userId' => [
                 'required',
                 'numeric',
                 Rule::exists('users', 'id')->whereNull('deleted_at'),
+            ],
+            'tagIds' => [
+                'nullable',
+                'array',
+                new DupplicateItem,
+            ],
+            'tagIds.*' => [
+                'nullable',
+                'numeric',
+                Rule::exists('tags', 'id'),
+            ],
+            'listContactIds' => [
+                'nullable',
+                'array',
+                new DupplicateItem,
+            ],
+            'listContactIds.*' => [
+                'nullable',
+                'numeric',
+                Rule::exists('list_contacts', 'id'),
             ],
         ];
     }

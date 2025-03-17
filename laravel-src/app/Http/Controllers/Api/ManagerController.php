@@ -36,7 +36,7 @@ class ManagerController extends Controller
         resolve(DeleteManager::class)->execute($id);
 
         return response()->json([
-            'message' => 'Delete tag success'
+            'message' => 'Delete manager success'
         ]);
     }
 }

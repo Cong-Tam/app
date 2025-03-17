@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Contact;
 
+use App\Rules\DupplicateItem;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -22,7 +23,7 @@ class UpdateContactsRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'contacts' => [
                 'required',
                 'array',
@@ -31,12 +32,12 @@ class UpdateContactsRequest extends FormRequest
                 'required',
                 Rule::exists('contacts', 'id')->whereNull('deleted_at'),
             ],
-            'contacts.*.first_name' => [
+            'contacts.*.firstName' => [
                 'required',
                 'string',
                 'max:255',
             ],
-            'contacts.*.last_name' => [
+            'contacts.*.lastName' => [
                 'required',
                 'string',
                 'max:255',
@@ -46,21 +47,48 @@ class UpdateContactsRequest extends FormRequest
                 'string',
                 'max:50',
             ],
-            'contacts.*.email' => [
-                'required',
-                'email',
-                // Rule::unique('contacts', 'email')->whereNull('deleted_at')->ignore(fn ($input) => $input['id']),
-            ],
             'contacts.*.opportunity' => [
                 'required',
                 'string',
                 'max:255',
             ],
-            'contacts.*.user_id' => [
+            'contacts.*.userId' => [
                 'required',
                 'numeric',
                 Rule::exists('users', 'id')->whereNull('deleted_at'),
             ],
+            'contacts.*.tagIds' => [
+                'nullable',
+                'array',
+                new DupplicateItem,
+            ],
+            'contacts.*.tagIds.*' => [
+                'nullable',
+                'numeric',
+                Rule::exists('tags', 'id'),
+            ],
+            'contacts.*.listContactIds' => [
+                'nullable',
+                'array',
+                new DupplicateItem,
+            ],
+            'contacts.*.listContactIds.*' => [
+                'nullable',
+                'numeric',
+                Rule::exists('list_contacts', 'id'),
+            ],
         ];
+
+        foreach(request()->input('contacts', []) as $key => $contact) {
+            $rules["contacts.$key.email"] = [
+                'required',
+                'email',
+                Rule::unique('contacts', 'email')
+                ->whereNull('deleted_at')
+                ->ignore($contact['id']),
+            ];
+        }
+
+        return $rules;
     }
 }

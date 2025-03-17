@@ -42,7 +42,7 @@ class ListContactController extends Controller
         resolve(DeleteListContact::class)->execute($id);
 
         return response()->json([
-            'message' => 'Delete tag success'
+            'message' => 'Delete list contact success'
         ]);
     }
 }
