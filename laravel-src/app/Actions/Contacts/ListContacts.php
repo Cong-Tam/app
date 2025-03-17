@@ -2,8 +2,8 @@
 
 namespace App\Actions\Contacts;
 
+use App\Filters\Contacts\ListContactFilter;
 use App\Models\Contact;
-use Illuminate\Support\Facades\Auth;
 
 class ListContacts
 {
@@ -22,6 +22,7 @@ class ListContacts
                 'tags:name,color',
                 'listContacts:name'
             ])
+            ->filter(new ListContactFilter($request))
             ->get();
     }
 }

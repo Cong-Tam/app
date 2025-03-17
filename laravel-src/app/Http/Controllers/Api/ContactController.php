@@ -13,13 +13,14 @@ use App\Http\Requests\Contact\DeleteContactsRequest;
 use App\Http\Requests\Contact\ListContactsRequest;
 use App\Http\Requests\Contact\UpdateContactsRequest;
 use Illuminate\Http\Request;
+use App\Http\Resources\Contact\ListContactCollection;
 
 class ContactController extends Controller
 {
     public function index(ListContactsRequest $request) {
-        $result = resolve(ListContacts::class)->execute($request);
+        $result = resolve(ListContacts::class)->execute($request->validated());
 
-        return response()->json($result);
+        return new ListContactCollection($result);
     }
 
     public function store(CreateContactRequest $request) {

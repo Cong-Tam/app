@@ -22,7 +22,30 @@ class ListContactsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'tagId' => [
+                'nullable',
+                'numeric'
+            ],
+            'listId' => [
+                'nullable',
+                'numeric'
+            ],
+            'userId' => [
+                'nullable',
+                'numeric'
+            ],
+            'createdBy' => [
+                'nullable',
+                'numeric'
+            ],
+            'email' => [
+                'nullable',
+                'string'
+            ],
+            'name' => [
+                'nullable',
+                'string'
+            ],
         ];
     }
 }
